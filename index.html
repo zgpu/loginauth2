@@ -56,6 +56,9 @@
                 .then((result) => {
                     const user = result.user;
                     document.getElementById('welcome-message').innerText = `Welcome, ${user.email}!`;
+		    const returnString = `Welcome, ${user.email}!`;
+                    window.opener.postMessage(returnString, "*");
+                    window.close();
                     loadData();
                 })
                 .catch((error) => {
