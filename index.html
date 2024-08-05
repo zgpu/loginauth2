@@ -26,8 +26,12 @@
 		};
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.getAuth(app);
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firebase Authentication and get a reference to the service
+        const auth = firebase.auth();
+
+       const db = firebase.firestore();
 
         // Function to get URL parameter
         function getUrlParameter(name) {
@@ -44,23 +48,24 @@
             console.log('Token is 2, proceeding...');
         } else {
             // Token is not 2, initiate Google login
-            console.log('Token is not 2, initiating Google login...');
-            const provider = new firebase.GoogleAuthProvider();
+           const provider = new firebase.auth.GoogleAuthProvider();
 
-            firebase.signInWithPopup(auth, provider)
+        document.getElementById('google-sign-in').addEventListener('click', () => {
+            auth.signInWithPopup(provider)
                 .then((result) => {
                     const user = result.user;
-                    const gmailId = user.email;
-                    const name = user.displayName;
-
-                    // Send back the string to the sender page
-                    const returnString = `2+${gmailId}+${name}`;
-                    window.opener.postMessage(returnString, "*");
-                    window.close();
+                    document.getElementById('welcome-message').innerText = `Welcome, ${user.displayName}!`;
+                    loadData();
                 })
                 .catch((error) => {
-                    console.error('Error during authentication:', error);
+                    if (error.code === 'auth/user-disabled') {
+                        document.getElementById('welcome-message').innerText = 'Account blocked';
+                    } else {
+                        console.error("Error during sign-in:", error);
+                    }
                 });
+        });
+              
         }
     </script>
 </body>
