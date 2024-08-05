@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Firebase Google Sign-In with Firestore</title>
+    <!-- Load Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <button id="google-sign-in">Sign in with Google</button>
+    <div id="welcome-message"></div>
+    <div id="data-display"></div>
+    
+    <script>
+        // Your web app's Firebase configuration
+       const firebaseConfig = {
+		  apiKey: "AIzaSyCr_AoZc16XaZhx29nLMWFpNDCpw7slbsI",
+		  authDomain: "test-fb-6c12b.firebaseapp.com",
+		  projectId: "test-fb-6c12b",
+		  storageBucket: "test-fb-6c12b.appspot.com",
+		  messagingSenderId: "925911738571",
+		  appId: "1:925911738571:web:95bc056c8ed3e4003d534e"
+		};
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firebase Authentication and get a reference to the service
+        const auth = firebase.auth();
+
+       const db = firebase.firestore();
+
+        // Google Sign-In
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        document.getElementById('google-sign-in').addEventListener('click', () => {
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    document.getElementById('welcome-message').innerText = `Welcome, ${user.displayName}!`;
+                    loadData();
+                })
+                .catch((error) => {
+                    if (error.code === 'auth/user-disabled') {
+                        document.getElementById('welcome-message').innerText = 'Account blocked';
+                    } else {
+                        console.error("Error during sign-in:", error);
+                    }
+                });
+        });
+
+        // Monitor auth state and load data if user is logged in
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('welcome-message').innerText = `Welcome, ${user.displayName}!`;
+                loadData();
+            } else {
+                document.getElementById('welcome-message').innerText = '';
+                document.getElementById('data-display').innerText = '';
+            }
+        });
+
+        // Function to load data from Firestore
+        function loadData() {
+            db.collection('bsn').doc('MgCFvYAQDzIV6wZjv7zz').get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data().data;
+                        document.getElementById('data-display').innerText = data ? data : 'No data found';
+                    } else {
+                        document.getElementById('data-display').innerText = 'No document found';
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error getting document:", error);
+                });
+        }
+    </script>
+</body>
+</html>
