@@ -1,19 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-   <title>Firebase Google Sign-In with Firestore</title>
-    <!-- Load Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Google Login</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.1/firebase-auth.js"></script>
 </head>
 <body>
-    <button id="google-sign-in">Sign in with Google</button>
-    <div id="welcome-message"></div>
-    <div id="data-display"></div>
-    
     <script>
-        // Your web app's Firebase configuration
+        // Your Firebase configuration
        const firebaseConfig = {
 		  apiKey: "AIzaSyCr_AoZc16XaZhx29nLMWFpNDCpw7slbsI",
 		  authDomain: "test-fb-6c12b.firebaseapp.com",
@@ -24,56 +20,40 @@
 		};
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
 
-        // Initialize Firebase Authentication and get a reference to the service
-        const auth = firebase.auth();
+        // Function to get URL parameter
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
 
-       const db = firebase.firestore();
+        // Check token parameter
+        const token = getUrlParameter('token');
+        if (token == '2') {
+            // Token is 2, proceed with action
+            console.log('Token is 2, proceeding...');
+        } else {
+            // Token is not 2, initiate Google login
+            console.log('Token is not 2, initiating Google login...');
+            const provider = new firebase.GoogleAuthProvider();
 
-        // Google Sign-In
-        const provider = new firebase.auth.GoogleAuthProvider();
-
-        document.getElementById('google-sign-in').addEventListener('click', () => {
-            auth.signInWithPopup(provider)
+            firebase.signInWithPopup(auth, provider)
                 .then((result) => {
                     const user = result.user;
-                    document.getElementById('welcome-message').innerText = `Welcome, ${user.displayName}!`;
-                    loadData();
+                    const gmailId = user.email;
+                    const name = user.displayName;
+
+                    // Send back the string to the sender page
+                    const returnString = `2+${gmailId}+${name}`;
+                    window.opener.postMessage(returnString, "*");
+                    window.close();
                 })
                 .catch((error) => {
-                    if (error.code === 'auth/user-disabled') {
-                        document.getElementById('welcome-message').innerText = 'Account blocked';
-                    } else {
-                        console.error("Error during sign-in:", error);
-                    }
-                });
-        });
-
-        // Monitor auth state and load data if user is logged in
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                document.getElementById('welcome-message').innerText = `Welcome, ${user.displayName}!`;
-                loadData();
-            } else {
-                document.getElementById('welcome-message').innerText = '';
-                document.getElementById('data-display').innerText = '';
-            }
-        });
-
-        // Function to load data from Firestore
-        function loadData() {
-            db.collection('bsn').doc('MgCFvYAQDzIV6wZjv7zz').get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        const data = doc.data().data;
-                        document.getElementById('data-display').innerText = data ? data : 'No data found';
-                    } else {
-                        document.getElementById('data-display').innerText = 'No document found';
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error getting document:", error);
+                    console.error('Error during authentication:', error);
                 });
         }
     </script>
