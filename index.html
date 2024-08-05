@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
+	<div id="welcome-message"></div>
     <script>
         // Your Firebase configuration
 
@@ -50,7 +51,7 @@
             // Token is not 2, initiate Google login
            const provider = new firebase.auth.GoogleAuthProvider();
 
-        document.getElementById('google-sign-in').addEventListener('click', () => {
+
             auth.signInWithPopup(provider)
                 .then((result) => {
                     const user = result.user;
@@ -64,7 +65,7 @@
                         console.error("Error during sign-in:", error);
                     }
                 });
-        });
+        
               
         }
     </script>
