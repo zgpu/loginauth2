@@ -55,7 +55,7 @@
             auth.signInWithPopup(provider)
                 .then((result) => {
                     const user = result.user;
-                    document.getElementById('welcome-message').innerText = `Welcome, ${user.displayName}!`;
+                    document.getElementById('welcome-message').innerText = `Welcome, ${user.email}!`;
                     loadData();
                 })
                 .catch((error) => {
