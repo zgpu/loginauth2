@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Entry Form</title>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <h1>Entry Form</h1>
+    <button onclick="setText('Login')">Login</button>
+    <button onclick="setText('Logout')">Logout</button>
+    <button onclick="setText('Absent')">Absent</button>
+    <button onclick="setText('Offday')">Offday</button>
+    
+    <br><br>
+    
+    <input type="text" id="textBox" readonly><br><br>
+    
+    <label for="datePicker">Date:</label>
+    <input type="date" id="datePicker"><br><br>
+    
+    <label for="timePicker">Time:</label>
+    <input type="time" id="timePicker"><br><br>
+    
+    <button onclick="saveEntry()">Save</button>
+
+    <script>
+        // Firebase configuration
+          const firebaseConfig = {
+      apiKey: "AIzaSyB2lqMgdPpc_stNigqRJqnfPCf1iY8VyHY",
+      authDomain: "atten-6c27a.firebaseapp.com",
+      projectId: "atten-6c27a",
+      storageBucket: "atten-6c27a.appspot.com",
+      messagingSenderId: "778358746313",
+      appId: "1:778358746313:web:2eff86a46ad327ea587118"
+    };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Set text box value
+        const setText = value => document.getElementById('textBox').value = value;
+
+        // Set current date on page load
+        window.onload = () => document.getElementById('datePicker').value = new Date().toISOString().split('T')[0];
+
+        // Save entry to Firebase
+        const saveEntry = () => {
+            const text = document.getElementById('textBox').value;
+            const date = document.getElementById('datePicker').value;
+            const time = document.getElementById('timePicker').value;
+
+            db.collection("entries").add({ text, date, time })
+            .then(() => alert("Entry successfully saved!"))
+            .catch(error => console.error("Error saving entry: ", error));
+        };
+    </script>
+</body>
+</html>
