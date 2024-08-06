@@ -53,7 +53,7 @@
             const date = document.getElementById('datePicker').value;
             const time = document.getElementById('timePicker').value;
 
-            db.collection("entries").add({ text, date, time })
+            db.collection("report").add({ text, date, time })
             .then(() => alert("Entry successfully saved!"))
             .catch(error => console.error("Error saving entry: ", error));
         };
