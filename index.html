@@ -153,6 +153,7 @@
         signInWithEmailAndPassword(auth, email, password)
           .then(userCredential => {
             document.getElementById('message').innerText = "Login successful!";
+            localStorage.setItem('mstatus', 'active');
             disableLoginFields();
           })
           .catch(error => {
