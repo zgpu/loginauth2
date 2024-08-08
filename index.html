@@ -178,6 +178,7 @@
         onAuthStateChanged(auth, (user) => {
           if (user) {
             document.getElementById('message').innerText = "You are already logged in";
+            localStorage.setItem('mstatus', 'active');
             disableLoginFields();
           } else {
             document.getElementById('message').innerText = "Not logged in";
