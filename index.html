@@ -153,6 +153,7 @@
         signInWithEmailAndPassword(auth, email, password)
           .then(userCredential => {
             document.getElementById('message').innerText = "Login successful!";
+            disableLoginFields();
           })
           .catch(error => {
             document.getElementById('message').innerText = `Error: ${error.message}`;
@@ -176,9 +177,11 @@
       const checkLoginStatus = () => {
         onAuthStateChanged(auth, (user) => {
           if (user) {
-            document.getElementById('message').innerText = "Logged in";
+            document.getElementById('message').innerText = "You are already logged in";
+            disableLoginFields();
           } else {
             document.getElementById('message').innerText = "Not logged in";
+            enableLoginFields();
           }
         });
       };
@@ -188,10 +191,25 @@
         signOut(auth)
           .then(() => {
             document.getElementById('message').innerText = "Signed out successfully!";
+            enableLoginFields();
           })
           .catch(error => {
             document.getElementById('message').innerText = `Error: ${error.message}`;
           });
+      };
+
+      // Disable login fields and button
+      const disableLoginFields = () => {
+        document.getElementById('login-email').disabled = true;
+        document.getElementById('login-password').disabled = true;
+        document.getElementById('login-button').disabled = true;
+      };
+
+      // Enable login fields and button
+      const enableLoginFields = () => {
+        document.getElementById('login-email').disabled = false;
+        document.getElementById('login-password').disabled = false;
+        document.getElementById('login-button').disabled = false;
       };
 
       // Function to switch tabs
@@ -212,6 +230,9 @@
         document.querySelectorAll('.tab-button').forEach(button => {
           button.addEventListener('click', () => switchTab(button.dataset.tab));
         });
+
+        // Check login status on load
+        checkLoginStatus();
       });
     </script>
 </body>
