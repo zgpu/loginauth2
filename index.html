@@ -1,26 +1,303 @@
-// Login function
-const login = () => {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Auth Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #container {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            width: 300px;
+            max-width: 90%;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+        }
+        .tab-button {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .tab-button:not(:last-child) {
+            border-right: 1px solid #ccc;
+        }
+        .tab-button.active {
+            background-color: #000;
+            font-weight: bold;
+        }
+        .tab {
+            display: none;
+            padding: 20px;
+        }
+        .tab.active {
+            display: block;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #000;
+        }
+        #message {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="tabs">
+            <div class="tab-button active" data-tab="login-tab">Login</div>
+            <div class="tab-button" data-tab="signup-tab">Signup</div>
+            <div class="tab-button" data-tab="forgot-password-tab">Forgot Password</div>
+        </div>
+        
+        <div id="login-tab" class="tab active">
+            <h2>Login</h2>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-password" placeholder="Password">
+            <button id="login-button">Login</button>
+            <button id="check-login-button">Check Login Status</button>
+            <button id="sign-out-button">Sign Out</button>
+        </div>
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(userCredential => {
-      const user = userCredential.user;
-      const jsonResponse = {
-        status: "success",
-        message: "login successful",
-        uid: user.uid,
-        email: user.email
+        <div id="signup-tab" class="tab">
+            <h2>Signup</h2>
+            <input type="email" id="signup-email" placeholder="Email">
+            <input type="password" id="signup-password" placeholder="Password">
+            <button id="signup-button">Signup</button>
+        </div>
+
+        <div id="forgot-password-tab" class="tab">
+            <h2>Forgot Password</h2>
+            <input type="email" id="forgot-password-email" placeholder="Email">
+            <button id="forgot-password-button">Reset Password</button>
+        </div>
+
+        <p id="message"></p>
+    </div>
+
+    <script type="module">
+      // Import Firebase modules
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+      import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCr_AoZc16XaZhx29nLMWFpNDCpw7slbsI",
+        authDomain: "test-fb-6c12b.firebaseapp.com",
+        projectId: "test-fb-6c12b",
+        storageBucket: "test-fb-6c12b.appspot.com",
+        messagingSenderId: "925911738571",
+        appId: "1:925911738571:web:95bc056c8ed3e4003d534e"
       };
-      document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-      localStorage.setItem('mstatus', 'active');
-      disableLoginFields();
-    })
-    .catch(error => {
-      const jsonResponse = {
-        status: "error",
-        message: error.message
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      // Function to get query parameters from URL
+      const getQueryParam = (param) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
       };
-      document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-    });
-};
+
+      // Function to extract email and password from token
+      const extractCredentialsFromToken = (token) => {
+        const [email, password] = token.split(',');
+        return { email, password };
+      };
+
+      // Login function using credentials from URL
+      const loginWithToken = () => {
+        const token = getQueryParam('token');
+        if (token) {
+          const { email, password } = extractCredentialsFromToken(token);
+
+          signInWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
+              const user = userCredential.user;
+              const jsonResponse = {
+                status: "success",
+                message: "Login successful!",
+                uid: user.uid,
+                email: user.email
+              };
+              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+              localStorage.setItem('mstatus', 'active');
+              disableLoginFields();
+            })
+            .catch(error => {
+              const jsonResponse = {
+                status: "error",
+                message: error.message
+              };
+              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+            });
+        } else {
+          document.getElementById('message').innerText = "No token found in URL";
+        }
+      };
+
+      // Signup function
+      const signup = () => {
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(userCredential => {
+            document.getElementById('message').innerText = "Signup successful!";
+          })
+          .catch(error => {
+            document.getElementById('message').innerText = `Error: ${error.message}`;
+          });
+      };
+
+      // Login function
+      const login = () => {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        signInWithEmailAndPassword(auth, email, password)
+          .then(userCredential => {
+            const user = userCredential.user;
+            const jsonResponse = {
+              status: "success",
+              message: "Login successful!",
+              uid: user.uid,
+              email: user.email
+            };
+            document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+            localStorage.setItem('mstatus', 'active');
+            disableLoginFields();
+          })
+          .catch(error => {
+            const jsonResponse = {
+              status: "error",
+              message: error.message
+            };
+            document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+          });
+      };
+
+      // Forgot Password function
+      const forgotPassword = () => {
+        const email = document.getElementById('forgot-password-email').value;
+
+        sendPasswordResetEmail(auth, email)
+          .then(() => {
+            document.getElementById('message').innerText = "Password reset email sent!";
+          })
+          .catch(error => {
+            document.getElementById('message').innerText = `Error: ${error.message}`;
+          });
+      };
+
+      // Check Login Status function
+      const checkLoginStatus = () => {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            document.getElementById('message').innerText = "You are already logged in";
+            localStorage.setItem('mstatus', 'active');
+            disableLoginFields();
+          } else {
+            document.getElementById('message').innerText = "Not logged in";
+            enableLoginFields();
+          }
+        });
+      };
+
+      // Sign Out function
+      const signOutUser = () => {
+        signOut(auth)
+          .then(() => {
+            document.getElementById('message').innerText = "Signed out successfully!";
+            enableLoginFields();
+          })
+          .catch(error => {
+            document.getElementById('message').innerText = `Error: ${error.message}`;
+          });
+      };
+
+      // Disable login fields and button
+      const disableLoginFields = () => {
+        document.getElementById('login-email').disabled = true;
+        document.getElementById('login-password').disabled = true;
+        document.getElementById('login-button').disabled = true;
+      };
+
+      // Enable login fields and button
+      const enableLoginFields = () => {
+        document.getElementById('login-email').disabled = false;
+        document.getElementById('login-password').disabled = false;
+        document.getElementById('login-button').disabled = false;
+      };
+
+      // Switch Tab function
+      const switchTab = (tabName) => {
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-button').forEach(button => {
+          button.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      };
+
+      // Attach event listeners
+      window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('signup-button').addEventListener('click', signup);
+        document.getElementById('login-button').addEventListener('click', login);
+        document.getElementById('forgot-password-button').addEventListener('click', forgotPassword);
+        document.getElementById('check-login-button').addEventListener('click', checkLoginStatus);
+        document.getElementById('sign-out-button').addEventListener('click', signOutUser);
+        document.querySelectorAll('.tab-button').forEach(button => {
+          button.addEventListener('click', () => switchTab(button.dataset.tab));
+        });
+
+        // Check login status on load
+        checkLoginStatus();
+
+        // Automatically login with token if present
+        loginWithToken();
+      });
+    </script>
+</body>
+</html>
