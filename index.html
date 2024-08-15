@@ -143,6 +143,11 @@
         return { email, password };
       };
 
+        const getAuthToken = async (user) => {
+      return await user.getIdToken();
+    };
+
+        
       // Login function using credentials from URL
       const loginWithToken = () => {
         const token = getQueryParam('token');
