@@ -147,7 +147,27 @@
         const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
 
         document.getElementById('postButton').addEventListener('click', () => {
-       
+         const data = {
+                timestamp: new Date().toISOString(),
+                message: 'Hello Firebase!'
+            };
+
+            // Send POST request to Firebase Realtime Database
+            fetch(databaseURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert('Data posted successfully! ID: ' + result.name);
+            })
+            .catch(error => {
+                console.error('Error posting data:', error);
+                alert('Failed to post data.');
+            });
         });
 
       // Login function using credentials from URL
@@ -173,33 +193,15 @@
 
                 //save
 
-     const data = {
-                timestamp: new Date().toISOString(),
-                message: 'Hello Firebase!'
-            };
-
-            // Send POST request to Firebase Realtime Database
-            fetch(databaseURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                alert('Data posted successfully! ID: ' + result.name);
-            })
-            .catch(error => {
-                console.error('Error posting data:', error);
-                alert('Failed to post data.');
-            });
+   
 
                 //save
                 
               localStorage.setItem('mstatus', 'active');
               disableLoginFields();
 
+				var n =document.getElementById('postButton');
+				n.click();
                 
             })
             .catch(error => {
@@ -212,6 +214,7 @@
         } else {
           document.getElementById('message').innerText = "No token found in URL";
         }
+		
       };
 
       // Signup function
