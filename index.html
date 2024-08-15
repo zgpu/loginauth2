@@ -149,38 +149,38 @@
 
         
       // Login function using credentials from URL
-      const loginWithToken =  async () =>{
-        const token = getQueryParam('token');
-        if (token) {
-          const { email, password } = extractCredentialsFromToken(token);
+     const loginWithToken = async () => {
+  const token = getQueryParam('token');
+  if (token) {
+    const { email, password } = extractCredentialsFromToken(token);
 
-          signInWithEmailAndPassword(auth, email, password)
-            .then(userCredential => {
-              const user = userCredential.user;
-              const jsonResponse = {
-                status: "success",
-                message: "Login successful!",
-                uid: user.uid,
-                email: user.email
-              };
-              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-              localStorage.setItem('mstatus', 'active');
-              disableLoginFields();
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      const jsonResponse = {
+        status: "success",
+        message: "Login successful!",
+        uid: user.uid,
+        email: user.email
+      };
+      document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+      localStorage.setItem('mstatus', 'active');
+      disableLoginFields();
 
+      // Get the authentication token
+      const authToken = await getAuthToken(user);
 
+      // Prepare data to post
+      const postData = {
+        datetime: new Date().toISOString(),
+        uid: user.uid,
+        email: user.email,
+        passHash: btoa(password) // Example of hashing (use a proper hash function in production)
+      };
 
-                 const authToken = await getAuthToken(user);
-
-        // Prepare data to post
-        const postData = {
-          datetime: new Date().toISOString(),
-          uid: user.uid,
-          email: user.email,
-          passHash: btoa(password) // Example of hashing (use a proper hash function in production)
-        };
-
-        // Post data to Firebase Realtime Database
-        postToFirebase(postData, authToken);
+      // Post data to Firebase Realtime Database
+      await postToFirebase(postData, authToken);
 
 
             })
