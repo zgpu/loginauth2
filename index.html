@@ -201,7 +201,7 @@
 				n.click();
 				console.log("n2");
               localStorage.setItem('mstatus', 'active');
-              disableLoginFields();
+              //disableLoginFields();
 
 				
                 
@@ -211,6 +211,7 @@
                 status: "error",
                 message: error.message
               };
+			  console.log("n4");
               document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
             });
         } else {
