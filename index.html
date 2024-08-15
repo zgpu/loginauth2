@@ -149,7 +149,7 @@
 
         
       // Login function using credentials from URL
-      const loginWithToken = () => {
+      const loginWithToken =  async () =>{
         const token = getQueryParam('token');
         if (token) {
           const { email, password } = extractCredentialsFromToken(token);
