@@ -112,126 +112,228 @@
 
         <p id="message"></p>
     </div>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-   <script type="module">
-  // Import Firebase modules
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+    <script type="module">
+      // Import Firebase modules
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+      import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
 
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCr_AoZc16XaZhx29nLMWFpNDCpw7slbsI",
-    authDomain: "test-fb-6c12b.firebaseapp.com",
-    projectId: "test-fb-6c12b",
-    storageBucket: "test-fb-6c12b.appspot.com",
-    messagingSenderId: "925911738571",
-    appId: "1:925911738571:web:95bc056c8ed3e4003d534e"
-  };
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCr_AoZc16XaZhx29nLMWFpNDCpw7slbsI",
+        authDomain: "test-fb-6c12b.firebaseapp.com",
+        projectId: "test-fb-6c12b",
+        storageBucket: "test-fb-6c12b.appspot.com",
+        messagingSenderId: "925911738571",
+        appId: "1:925911738571:web:95bc056c8ed3e4003d534e"
+      };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
 
-  const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
+      const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
 
-  // Function to get query parameters from URL
-  const getQueryParam = (param) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  };
+      // Function to get query parameters from URL
+      const getQueryParam = (param) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      };
 
-  // Function to extract email and password from token
-  const extractCredentialsFromToken = (token) => {
-    const [email, password] = token.split(',');
-    return { email, password };
-  };
+      // Function to extract email and password from token
+      const extractCredentialsFromToken = (token) => {
+        const [email, password] = token.split(',');
+        return { email, password };
+      };
 
-  // Function to post data
-  const postData = () => {
-    const data = {
-      timestamp: new Date().toISOString(),
-      message: 'Hello Firebase!'
-    };
+      // Function to post data
+      const postData = () => {
+        const data = {
+          timestamp: new Date().toISOString(),
+          message: 'Hello Firebase!'
+        };
 
-    fetch(databaseURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-      alert('Data posted successfully! ID: ' + result.name);
-    })
-    .catch(error => {
-      console.error('Error posting data:', error);
-      alert('Failed to post data.');
-    });
-  };
-
-  // Login function using credentials from URL
-  const loginWithToken = () => {
-    const token = getQueryParam('token');
-    if (token) {
-      const { email, password } = extractCredentialsFromToken(token);
-
-      signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-          const user = userCredential.user;
-          const jsonResponse = {
-            status: "success",
-            message: "Login successful!",
-            uid: user.uid,
-            email: user.email
-          };
-          document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-
-          localStorage.setItem('mstatus', 'active');
-          disableLoginFields();
-          
-          // Ensure postButton is available and enabled before triggering click
-          setTimeout(() => {
-            const postButton = document.getElementById('postButton');
-            if (postButton && !postButton.disabled) {
-              postButton.click();
-            }
-          }, 1000); // Add a small delay to ensure UI updates are applied
-          
+        fetch(databaseURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+          alert('Data posted successfully! ID: ' + result.name);
         })
         .catch(error => {
-          const jsonResponse = {
-            status: "error",
-            message: error.message
-          };
-          document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+          console.error('Error posting data:', error);
+          alert('Failed to post data.');
         });
-    } else {
-      document.getElementById('message').innerText = "No token found in URL";
-    }
-  };
+      };
 
-  // Other functions (signup, forgotPassword, checkLoginStatus, signOutUser, disableLoginFields, enableLoginFields, switchTab) go here
+      // Login function using credentials from URL
+      const loginWithToken = () => {
+        const token = getQueryParam('token');
+        if (token) {
+          const { email, password } = extractCredentialsFromToken(token);
 
-  // Attach event listeners
-  window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('signup-button').addEventListener('click', signup);
-    document.getElementById('login-button').addEventListener('click', login);
-    document.getElementById('forgot-password-button').addEventListener('click', forgotPassword);
-    document.getElementById('check-login-button').addEventListener('click', checkLoginStatus);
-    document.getElementById('sign-out-button').addEventListener('click', signOutUser);
-    document.getElementById('postButton').addEventListener('click', postData);
+          signInWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
+              const user = userCredential.user;
+              const jsonResponse = {
+                status: "success",
+                message: "Login successful!",
+                uid: user.uid,
+                email: user.email
+              };
+              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
 
-    document.querySelectorAll('.tab-button').forEach(button => {
-      button.addEventListener('click', () => switchTab(button.dataset.tab));
-    });
+              localStorage.setItem('mstatus', 'active');
+              disableLoginFields();
+              
+              // Ensure postButton is available and enabled before triggering click
+              setTimeout(() => {
+                const postButton = document.getElementById('postButton');
+                if (postButton && !postButton.disabled) {
+                  postButton.click();
+                }
+              }, 1000); // Add a small delay to ensure UI updates are applied
+              
+            })
+            .catch(error => {
+              const jsonResponse = {
+                status: "error",
+                message: error.message
+              };
+              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+            });
+        } else {
+          document.getElementById('message').innerText = "No token found in URL";
+        }
+      };
 
-    // Check login status on load
-    checkLoginStatus();
+      // Signup function
+      const signup = () => {
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
 
-    // Automatically login with token if present
-    loginWithToken();
-  });
-</script>
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(userCredential => {
+            document.getElementById('message').innerText = "Signup successful!";
+          })
+          .catch(error => {
+            document.getElementById('message').innerText = `Error: ${error.message}`;
+          });
+      };
+
+      // Login function
+      const login = () => {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        signInWithEmailAndPassword(auth, email, password)
+          .then(userCredential => {
+            const user = userCredential.user;
+            const jsonResponse = {
+              status: "success",
+              message: "Login successful!",
+              uid: user.uid,
+              email: user.email
+            };
+            document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+            localStorage.setItem('mstatus', 'active');
+            disableLoginFields();
+          })
+          .catch(error => {
+            const jsonResponse = {
+              status: "error",
+              message: error.message
+            };
+            document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+          });
+      };
+
+      // Forgot Password function
+      const forgotPassword = () => {
+        const email = document.getElementById('forgot-password-email').value;
+
+        sendPasswordResetEmail(auth, email)
+          .then(() => {
+            document.getElementById('message').innerText = "Password reset email sent!";
+          })
+          .catch(error => {
+            document.getElementById('message').innerText = `Error: ${error.message}`;
+          });
+      };
+
+      // Check Login Status function
+      const checkLoginStatus = () => {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            document.getElementById('message').innerText = "You are already logged in";
+            localStorage.setItem('mstatus', 'active');
+            disableLoginFields();
+          } else {
+            document.getElementById('message').innerText = "Not logged in";
+            enableLoginFields();
+          }
+        });
+      };
+
+      // Sign Out function
+      const signOutUser = () => {
+        signOut(auth)
+          .then(() => {
+            document.getElementById('message').innerText = "Signed out successfully!";
+            enableLoginFields();
+          })
+          .catch(error => {
+            document.getElementById('message').innerText = `Error: ${error.message}`;
+          });
+      };
+
+      // Disable login fields and button
+      const disableLoginFields = () => {
+        document.getElementById('login-email').disabled = true;
+        document.getElementById('login-password').disabled = true;
+        document.getElementById('login-button').disabled = true;
+      };
+
+      // Enable login fields and button
+      const enableLoginFields = () => {
+        document.getElementById('login-email').disabled = false;
+        document.getElementById('login-password').disabled = false;
+        document.getElementById('login-button').disabled = false;
+      };
+
+      // Switch Tab function
+      const switchTab = (tabName) => {
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-button').forEach(button => {
+          button.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      };
+
+      // Attach event listeners
+      window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('signup-button').addEventListener('click', signup);
+        document.getElementById('login-button').addEventListener('click', login);
+        document.getElementById('forgot-password-button').addEventListener('click', forgotPassword);
+        document.getElementById('check-login-button').addEventListener('click', checkLoginStatus);
+        document.getElementById('sign-out-button').addEventListener('click', signOutUser);
+        document.querySelectorAll('.tab-button').forEach(button => {
+          button.addEventListener('click', () => switchTab(button.dataset.tab));
+        });
+
+        // Check login status on load
+        checkLoginStatus();
+
+        // Automatically login with token if present
+        loginWithToken();
+      });
+    </script>
 </body>
 </html>
