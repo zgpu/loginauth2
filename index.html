@@ -143,110 +143,37 @@
         return { email, password };
       };
 
-  
-      // Import Firebase modules
-      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-      import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
-
-      // Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyCr_AoZc16XaZhx29nLMWFpNDCpw7slbsI",
-        authDomain: "test-fb-6c12b.firebaseapp.com",
-        projectId: "test-fb-6c12b",
-        storageBucket: "test-fb-6c12b.appspot.com",
-        messagingSenderId: "925911738571",
-        appId: "1:925911738571:web:95bc056c8ed3e4003d534e"
-      };
-
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-
-      // Function to get query parameters from URL
-      const getQueryParam = (param) => {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-      };
-
-      // Function to extract email and password from token
-      const extractCredentialsFromToken = (token) => {
-        const [email, password] = token.split(',');
-        return { email, password };
-      };
-
-      const getAuthToken = async (user) => {
-        return await user.getIdToken();
-      };
-
-      // Function to post data to Firebase Realtime Database
-      const postToFirebase = async (data, authToken, endpoint = 'logins') => {
-        const firebaseUrl = `https://test-fb-6c12b-default-rtdb.firebaseio.com/${endpoint}.json?auth=${authToken}`;
-
-        try {
-          const response = await fetch(firebaseUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-          });
-
-          if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
-          }
-
-          const result = await response.json();
-          console.log('Data successfully posted:', result);
-        } catch (error) {
-          console.error('Error posting data:', error);
-        }
-      };
-
       // Login function using credentials from URL
-      const loginWithToken = async () => {
+      const loginWithToken = () => {
         const token = getQueryParam('token');
         if (token) {
           const { email, password } = extractCredentialsFromToken(token);
 
-          try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            
-            const jsonResponse = {
-              status: "success",
-              message: "Login successful!",
-              uid: user.uid,
-              email: user.email
-            };
-            document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-            localStorage.setItem('mstatus', 'active');
-            disableLoginFields();
-
-            // Get the authentication token
-            const authToken = await getAuthToken(user);
-
-            // Prepare data to post
-            const postData = {
-              datetime: new Date().toISOString(),
-              uid: user.uid,
-              email: user.email,
-              passHash: btoa(password) // Example of hashing (use a proper hash function in production)
-            };
-
-            // Post data to Firebase Realtime Database
-            await postToFirebase(postData, authToken);
-
-          } catch (error) {
-            const jsonResponse = {
-              status: "error",
-              message: error.message
-            };
-            document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-          }
+          signInWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
+              const user = userCredential.user;
+              const jsonResponse = {
+                status: "success",
+                message: "Login successful!",
+                uid: user.uid,
+                email: user.email
+              };
+              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+              localStorage.setItem('mstatus', 'active');
+              disableLoginFields();
+            })
+            .catch(error => {
+              const jsonResponse = {
+                status: "error",
+                message: error.message
+              };
+              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+            });
         } else {
           document.getElementById('message').innerText = "No token found in URL";
         }
       };
+
       // Signup function
       const signup = () => {
         const email = document.getElementById('signup-email').value;
@@ -276,7 +203,7 @@
               
           })
           .catch(error => {
-            document.getElementById('message').innerText = `Error: ${error.message}`;
+            document.getElementById('message').innerText = Error: ${error.message};
           });
       };
 
@@ -316,7 +243,7 @@
             document.getElementById('message').innerText = "Password reset email sent!";
           })
           .catch(error => {
-            document.getElementById('message').innerText = `Error: ${error.message}`;
+            document.getElementById('message').innerText = Error: ${error.message};
           });
       };
 
@@ -342,7 +269,7 @@
             enableLoginFields();
           })
           .catch(error => {
-            document.getElementById('message').innerText = `Error: ${error.message}`;
+            document.getElementById('message').innerText = Error: ${error.message};
           });
       };
 
@@ -370,7 +297,7 @@
         });
 
         document.getElementById(tabName).classList.add('active');
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.querySelector([data-tab="${tabName}"]).classList.add('active');
       };
 
       // Attach event listeners
@@ -383,28 +310,7 @@
         document.querySelectorAll('.tab-button').forEach(button => {
           button.addEventListener('click', () => switchTab(button.dataset.tab));
         });
-    const postToFirebase = async (data, authToken, endpoint = 'logins') => {
-  const firebaseUrl = `https://your-database-name.firebaseio.com/${endpoint}.json?auth=${authToken}`;
 
-  try {
-    const response = await fetch(firebaseUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    console.log('Data successfully posted:', result);
-  } catch (error) {
-    console.error('Error posting data:', error);
-  }
-};
         // Check login status on load
         checkLoginStatus();
 
