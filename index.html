@@ -154,7 +154,7 @@
               const user = userCredential.user;
                 var authToken = user.getIdToken();
 
-                const databaseUrl = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/'+(user.uid)'+.json'; // Replace with your Firebase Realtime Database URL
+                const databaseUrl = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/'+(user.uid)+'.json'; // Replace with your Firebase Realtime Database URL
 
                 fetch(databaseUrl, {
                   method: 'POST',
