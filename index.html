@@ -152,6 +152,24 @@
           signInWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
               const user = userCredential.user;
+                var authToken = user.getIdToken();
+
+                const databaseUrl = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/'+(user.email)'+.json'; // Replace with your Firebase Realtime Database URL
+
+                fetch(databaseUrl, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                  },
+                  body: JSON.stringify({
+                    key1: 'value1',
+                    key2: 'value2'
+                  })
+                })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
               const jsonResponse = {
                 status: "success",
                 message: "Login successful!",
