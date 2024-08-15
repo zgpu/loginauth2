@@ -170,55 +170,7 @@
             });
         });
 
-      // Login function using credentials from URL
-      const loginWithToken = () => {
-        const token = getQueryParam('token');
-        if (token) {
-          const { email, password } = extractCredentialsFromToken(token);
-
-          signInWithEmailAndPassword(auth, email, password)
-            .then(userCredential => {
-              const user = userCredential.user;
-
-              
-        
-                
-              const jsonResponse = {
-                status: "success",
-                message: "Login successful!",
-                uid: user.uid,
-                email: user.email
-              };
-              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-
-                //save
-
-   
-
-                //save
-				console.log("n");
-                var n =document.getElementById('postButton');
-				n.click();
-				console.log("n2");
-              localStorage.setItem('mstatus', 'active');
-              //disableLoginFields();
-
-				
-                
-            })
-            .catch(error => {
-              const jsonResponse = {
-                status: "error",
-                message: error.message
-              };
-			  console.log("n4");
-              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-            });
-        } else {
-          document.getElementById('message').innerText = "No token found in URL";
-        }
-		
-      };
+    
 
       // Signup function
       const signup = () => {
@@ -268,7 +220,9 @@
               email: user.email
             };
             document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-            localStorage.setItem('mstatus', 'active');
+            var n =document.getElementById('postButton');
+				n.click();
+			localStorage.setItem('mstatus', 'active');
             disableLoginFields();
           })
           .catch(error => {
