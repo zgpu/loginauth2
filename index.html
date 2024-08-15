@@ -203,7 +203,7 @@
               
           })
           .catch(error => {
-            document.getElementById('message').innerText = Error: ${error.message};
+            document.getElementById('message').innerText = 'Error:'+ String(error.message);
           });
       };
 
