@@ -152,6 +152,25 @@
           signInWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
               const user = userCredential.user;
+
+                const authToken = user.getIdToken(); // Retrieve this after user authentication
+                const databaseUrl = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/path.json';
+                fetch(databaseUrl, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}` // Include the token here
+                  },
+                  body: JSON.stringify({
+                    key1: 'value1',
+                    key2: 'value2'
+                  })
+                })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+
+                
               const jsonResponse = {
                 status: "success",
                 message: "Login successful!",
