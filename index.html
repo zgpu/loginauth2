@@ -152,9 +152,6 @@
           signInWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
               const user = userCredential.user;
-         
-  
-              
               const jsonResponse = {
                 status: "success",
                 message: "Login successful!",
