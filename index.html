@@ -155,21 +155,31 @@
 
                 //const authToken = user.getIdToken(); // Retrieve this after user authentication
                 
-                const databaseUrl = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/path.json';
+                const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
 
-                fetch(databaseUrl, {
-                  method: 'POST',
-                  headers: {
+       
+            const data = {
+                timestamp: new Date().toISOString(),
+                message: 'Hello Firebase!'
+            };
+
+            // Send POST request to Firebase Realtime Database
+            fetch(databaseURL, {
+                method: 'POST',
+                headers: {
                     'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    key1: 'value1',
-                    key2: 'value2'
-                  })
-                })
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => console.error('Error:', error));
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert('Data posted successfully! ID: ' + result.name);
+            })
+            .catch(error => {
+                console.error('Error posting data:', error);
+                alert('Failed to post data.');
+            });
+        
                 
               const jsonResponse = {
                 status: "success",
