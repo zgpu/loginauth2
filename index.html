@@ -144,21 +144,9 @@
         return { email, password };
       };
 
-      // Login function using credentials from URL
-      const loginWithToken = () => {
-        const token = getQueryParam('token');
-        if (token) {
-          const { email, password } = extractCredentialsFromToken(token);
+        const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
 
-          signInWithEmailAndPassword(auth, email, password)
-            .then(userCredential => {
-              const user = userCredential.user;
-
-                //const authToken = user.getIdToken(); // Retrieve this after user authentication
-                
-                const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
-
-       
+        document.getElementById('postButton').addEventListener('click', () => {
             const data = {
                 timestamp: new Date().toISOString(),
                 message: 'Hello Firebase!'
@@ -180,6 +168,19 @@
                 console.error('Error posting data:', error);
                 alert('Failed to post data.');
             });
+        });
+
+      // Login function using credentials from URL
+      const loginWithToken = () => {
+        const token = getQueryParam('token');
+        if (token) {
+          const { email, password } = extractCredentialsFromToken(token);
+
+          signInWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
+              const user = userCredential.user;
+
+              
         
                 
               const jsonResponse = {
