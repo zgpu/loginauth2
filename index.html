@@ -143,13 +143,12 @@
         return { email, password };
       };
 
-        const getAuthToken = async (user) => {
-      return await user.getIdToken();
-    };
+     const getAuthToken = async (user) => {
+  return await user.getIdToken();
+};
 
-        
-      // Login function using credentials from URL
-     const loginWithToken = async () => {
+// Login function using credentials from URL
+const loginWithToken = async () => {
   const token = getQueryParam('token');
   if (token) {
     const { email, password } = extractCredentialsFromToken(token);
@@ -182,20 +181,17 @@
       // Post data to Firebase Realtime Database
       await postToFirebase(postData, authToken);
 
-
-            })
-            .catch(error => {
-              const jsonResponse = {
-                status: "error",
-                message: error.message
-              };
-              document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-            });
-        } else {
-          document.getElementById('message').innerText = "No token found in URL";
-        }
+    } catch (error) {
+      const jsonResponse = {
+        status: "error",
+        message: error.message
       };
-
+      document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+    }
+  } else {
+    document.getElementById('message').innerText = "No token found in URL";
+  }
+};
       // Signup function
       const signup = () => {
         const email = document.getElementById('signup-email').value;
