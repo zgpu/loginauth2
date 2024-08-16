@@ -209,23 +209,24 @@
       const login = () => {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
-	var s="";
-	var user=null;
+	 var jsonResponse =null;
         signInWithEmailAndPassword(auth, email, password)
           .then(userCredential => {
-            user = userCredential.user;
-		 s=  user.getIdToken(true);
-		
-	    })
-	    .then(token => {
-	        // Token is now a string
-	        const jsonResponse = {
+            var user = userCredential.user;
+		var s=  user.getIdToken(true);
+		jsonResponse = {
 	            status: "success",
 	            message: "Login successful!",
 	            uid: user.uid,
 	            email: user.email,
 	            token: token 
 	        };
+
+		  return s;
+	    })
+	    .then(token => {
+	        // Token is now a string
+	        const 
 	
 	        alert('Token: ' + token); 
             document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
