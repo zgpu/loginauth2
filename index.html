@@ -215,7 +215,7 @@
           .then(userCredential => {
             user = userCredential.user;
 		 s=  user.getIdToken(true);
-		return user.getIdToken(true);
+		
 	    })
 	    .then(token => {
 	        // Token is now a string
