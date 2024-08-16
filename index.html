@@ -206,43 +206,45 @@
       };
 
       // Login function
-      const login = () => {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-	 var jsonResponse =null;
-        signInWithEmailAndPassword(auth, email, password)
-          .then(userCredential => {
-            var user = userCredential.user;
-		var s=  user.getIdToken(true);
-		jsonResponse = {
-	            status: "success",
-	            message: "Login successful!",
-	            uid: user.uid,
-	            email: user.email,
-	            token: token 
-	        };
+     // Login function
+const login = () => {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
 
-		  return s;
-	    })
-	    .then(token => {
-	        // Token is now a string
-	         
-	
-	       // alert('Token: ' + token); 
-            document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-            var n =document.getElementById('postButton');
-				n.click();
-			localStorage.setItem('mstatus', 'active');
-            disableLoginFields();
-          })
-          .catch(error => {
+    signInWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+            const user = userCredential.user;
+            // Get the token as a promise
+            return user.getIdToken(true).then(token => {
+                // Create the response object with the token
+                const jsonResponse = {
+                    status: "success",
+                    message: "Login successful!",
+                    uid: user.uid,
+                    email: user.email,
+                    token: token  // Token is included here
+                };
+
+                // Display the response
+                document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
+
+                // Trigger any actions needed after login
+                const postButton = document.getElementById('postButton');
+                postButton.click();
+                
+                localStorage.setItem('mstatus', 'active');
+                disableLoginFields();
+            });
+        })
+        .catch(error => {
             const jsonResponse = {
-              status: "error",
-              message: error.message
+                status: "error",
+                message: error.message
             };
             document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
-          });
-      };
+        });
+};
+
 
       // Forgot Password function
       const forgotPassword = () => {
