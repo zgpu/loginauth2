@@ -168,7 +168,8 @@
             })
             .then(response => response.json())
             .then(result => {
-                document.getElementById('result').textContent = 'Data posted successfully! ID: ';// + result.name;
+                alert("Data posted successfully!"+ result.name);
+               // document.getElementById('result').textContent = 'Data posted successfully! ID: ';// + result.name;
             })
             .catch(handleError);
         });
