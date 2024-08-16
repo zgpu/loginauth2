@@ -214,15 +214,19 @@
           .then(userCredential => {
             const user = userCredential.user;
 		 s=  user.getIdToken(true);
-		
-            const jsonResponse = {
-              status: "success",
-              message: "Login successful!",
-              uid: user.uid,
-              email: user.email,
-		    token:s
-            };
-		  alert(s);
+		return user.getIdToken(true);
+	    })
+	    .then(token => {
+	        // Token is now a string
+	        const jsonResponse = {
+	            status: "success",
+	            message: "Login successful!",
+	            uid: user.uid,
+	            email: user.email,
+	            token: token 
+	        };
+	
+	        alert('Token: ' + token); 
             document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
             var n =document.getElementById('postButton');
 				n.click();
