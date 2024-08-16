@@ -145,15 +145,21 @@
       };
 
         const databaseURL = 'https://test-fb-6c12b-default-rtdb.firebaseio.com/posts.json';
-
+        var gloabltoken="";
         document.getElementById('postButton').addEventListener('click', () => {
-         const data = {
+          const token = gloabltoken.trim();
+            if (!token) {
+                alert('Please enter a token.');
+                return;
+            }
+
+            const data = {
                 timestamp: new Date().toISOString(),
                 message: 'Hello Firebase!'
             };
 
             // Send POST request to Firebase Realtime Database
-            fetch(databaseURL, {
+            fetch(`${databaseURL}?auth=${token}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -162,12 +168,9 @@
             })
             .then(response => response.json())
             .then(result => {
-                alert('Data posted successfully! ID: ' + result.name);
+                document.getElementById('result').textContent = 'Data posted successfully! ID: ' + result.name;
             })
-            .catch(error => {
-                console.error('Error posting data:', error);
-                alert('Failed to post data.');
-            });
+            .catch(handleError);
         });
 
     
@@ -224,6 +227,8 @@ const login = () => {
                     email: user.email,
                     token: token  // Token is included here
                 };
+
+                gloabltoken=token;
 
                 // Display the response
                 document.getElementById('message').innerText = JSON.stringify(jsonResponse, null, 2);
